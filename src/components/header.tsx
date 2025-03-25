@@ -2,7 +2,7 @@
 
 import { Map, Plus } from "lucide-react"
 import Link from "next/link"
-// import { UserAuthNav } from "../auth/user-auth-nav"
+import { UserAuthNav } from "./auth/user-auth-nav"
 
 export function DashboardHeader() {
   return (
@@ -14,7 +14,7 @@ export function DashboardHeader() {
         </Link>
       </div>
       <div className="flex items-center gap-2">
-        {/* <UserAuthNav /> */}
+        <UserAuthNav />
       </div>
     </header>
   );
