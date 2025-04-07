@@ -85,12 +85,10 @@ export default function PengajuanTambangForm() {
         description: "Data tambang telah dikirim untuk diverifikasi oleh admin.",
       });
 
-      // Reset form setelah 3 detik
+      // Arahkan ke dashboard setelah 2 detik
       setTimeout(() => {
-        form.reset();
-        setSubmitSuccess(false);
-        router.refresh();
-      }, 3000);
+        router.push('/dashboard');
+      }, 2000);
     } catch (error) {
       console.error("Error submitting form:", error);
       toast("Pengajuan Gagal", {

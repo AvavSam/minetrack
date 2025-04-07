@@ -1,6 +1,7 @@
 import { connectToDatabase } from "./mongodb";
 import { ObjectId } from "mongodb";
 import { Mine } from "@/types/mine";
+import { attachWeatherData, attachWeatherDataToMines } from "./weather";
 
 interface FilterOptions {
   search?: string;
@@ -30,10 +31,13 @@ export async function getTambangTerverifikasi(filter: FilterOptions = {}): Promi
   const tambangData = await db.collection("tambang").find(query).toArray();
 
   // Konversi _id dari ObjectId ke string
-  return tambangData.map((tambang: any) => ({
+  const mines = tambangData.map((tambang: any) => ({
     ...tambang,
-    _id: tambang._id.toString(),
+    _id: tambang._id.toString()
   }));
+
+  // Attach weather data to mines
+  return attachWeatherDataToMines(mines);
 }
 
 export async function getTambangById(id: string): Promise<Mine | null> {
@@ -46,9 +50,11 @@ export async function getTambangById(id: string): Promise<Mine | null> {
     return null;
   }
 
-  // Konversi _id dari ObjectId ke string
-  return {
+  // Konversi _id dari ObjectId ke string dan attach weather data
+  const mine = {
     ...tambang,
-    _id: tambang._id.toString(),
+    _id: tambang._id.toString()
   } as Mine;
+
+  return attachWeatherData(mine);
 }

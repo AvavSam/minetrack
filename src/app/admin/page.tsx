@@ -17,19 +17,27 @@ import { MineProvider } from "@/context/MineContext";
 import { getTambangTerverifikasi } from "@/lib/tambang";
 import { Lisensi } from "@/types/mine";
 
-export default async function AdminPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
-  // Verify admin role on the server side as
+// Add searchParams as a prop to the page component
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  // Verify admin role on the server side
   const session = await getServerSession(authOptions);
-
-  // Ambil parameter pencarian dan filter
-  const search = typeof searchParams.search === "string" ? searchParams.search : "";
-  const tipeTambang = typeof searchParams.tipeTambang === "string" ? searchParams.tipeTambang : "";
-  const lisensi = searchParams.lisensi as Lisensi;
-  const tambangData = await getTambangTerverifikasi({ search, tipeTambang, lisensi });
 
   if (!session || session.user.role !== "admin") {
     redirect("/dashboard");
   }
+
+  // Resolve searchParams before using them
+  const params = await Promise.resolve(searchParams);
+  const search = typeof params.search === "string" ? params.search : "";
+  const tipeTambang = typeof params.tipeTambang === "string" ? params.tipeTambang : "";
+  const lisensi = (typeof params.lisensi === "string" ? params.lisensi : "") as Lisensi;
+
+  const tambangData = await getTambangTerverifikasi({ search, tipeTambang, lisensi });
+
   return (
     <MineProvider>
       <div className="flex flex-col">

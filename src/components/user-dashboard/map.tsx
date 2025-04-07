@@ -135,12 +135,6 @@ export function DashboardMap({ tambangData }: DashboardMapProps) {
                         </p>
                         {mine.deskripsi && <p className="mt-1">{mine.deskripsi}</p>}
                       </div>
-                      <div className="flex justify-end gap-2 pt-2">
-                        <Button size="sm" variant="outline">
-                          Details
-                        </Button>
-                        {!mine.verifikasi && <Button size="sm">Verify</Button>}
-                      </div>
                     </div>
                   </Popup>
                 </Marker>

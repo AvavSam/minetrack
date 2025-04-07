@@ -14,10 +14,14 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
   const params = await Promise.resolve(searchParams);
   const search = typeof params.search === "string" ? params.search : "";
   const tipeTambang = typeof params.tipeTambang === "string" ? params.tipeTambang : "";
-  const izinTambang = typeof params.izinTambang === "string" ? params.izinTambang : "";
+  const lisensi = typeof params.lisensi === "string" ? params.lisensi : "";
 
   // Ambil data tambang terverifikasi dari database
-  const tambangData = await getTambangTerverifikasi({ search, tipeTambang, izinTambang });
+  const tambangData = await getTambangTerverifikasi({
+    search,
+    tipeTambang,
+    lisensi: lisensi as "valid" | "pending" | undefined
+  });
 
   return (
     <div className="p-6 max-w-7xl mx-auto w-full">
@@ -42,8 +46,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
             <div className="p-4 space-y-4">
               <div className="grid gap-4">
                 <StatCard title="Total Tambang" value={tambangData.length.toString()} icon="database" color="bg-blue-50 text-blue-600" />
-                <StatCard title="Tambang Legal" value={tambangData.filter((t: { izinTambang: string }) => t.izinTambang === "legal").length.toString()} icon="check-circle" color="bg-green-50 text-green-600" />
-                <StatCard title="Tambang Ilegal" value={tambangData.filter((t: { izinTambang: string }) => t.izinTambang === "ilegal").length.toString()} icon="alert-circle" color="bg-red-50 text-red-600" />
+                <StatCard title="Tambang Tervalidasi" value={tambangData.filter((t: { lisensi: string }) => t.lisensi === "valid").length.toString()} icon="check-circle" color="bg-green-50 text-green-600" />
+                <StatCard title="Tambang Pending" value={tambangData.filter((t: { lisensi: string }) => t.lisensi === "pending").length.toString()} icon="alert-circle" color="bg-red-50 text-red-600" />
                 <StatCard title="Tipe Tambang" value={Array.from(new Set(tambangData.map((t: { tipeTambang: string }) => t.tipeTambang))).length.toString()} icon="layers" color="bg-purple-50 text-purple-600" />
               </div>
             </div>

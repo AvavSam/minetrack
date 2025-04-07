@@ -49,10 +49,12 @@ export function UserAuthNav() {
   return (
     <>
       <nav className="flex items-center space-x-1">
-        <Link className={buttonVariants({ variant: "outline" })} href="/pengajuan-tambang">
-          <Plus className="h-4 w-4 mr-1" />
-          <span>Ajukan Tambang</span>
-        </Link>
+        {session?.user?.role !== 'admin' && session?.user && (
+          <Link className={buttonVariants({ variant: "outline" })} href="/pengajuan-tambang">
+            <Plus className="h-4 w-4 mr-1" />
+            <span>Ajukan Tambang</span>
+          </Link>
+        )}
       </nav>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -65,7 +67,7 @@ export function UserAuthNav() {
           <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <Link href="/dashboard">Dashboard</Link>
+            <Link href={session?.user?.role === 'admin' ? '/admin' : '/dashboard'}>Dashboard</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/dashboard/profil">Profil</Link>
