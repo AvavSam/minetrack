@@ -65,7 +65,7 @@ export function MineList({ tambangData }: MineListProps) {
               </td>
               <td className="px-4 py-4">
                 <Button asChild size="sm">
-                  <Link href={`/dashboard/tambang/${tambang._id}`}>Detail</Link>
+                  <Link href={`/tambang/${tambang._id}`}>Detail</Link>
                 </Button>
               </td>
             </tr>

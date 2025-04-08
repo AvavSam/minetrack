@@ -41,20 +41,26 @@ export async function getTambangTerverifikasi(filter: FilterOptions = {}): Promi
 }
 
 export async function getTambangById(id: string): Promise<Mine | null> {
-  const { db } = await connectToDatabase();
+  try {
+    const { db } = await connectToDatabase();
 
-  // Ambil data tambang berdasarkan ID
-  const tambang = await db.collection("tambang").findOne({ _id: new ObjectId(id) });
+    // Ambil data tambang berdasarkan ID
+    const tambang = await db.collection("tambang").findOne({ _id: new ObjectId(id) });
 
-  if (!tambang) {
-    return null;
+    if (!tambang) {
+      return null;
+    }
+
+    // Konversi _id dari ObjectId ke string
+    const mine = {
+      ...tambang,
+      _id: tambang._id.toString(),
+    } as Mine;
+
+    // Attach weather data ke tambang
+    return attachWeatherData(mine);
+  } catch (error) {
+    console.error("Error fetching tambang by ID:", error);
+    throw new Error("Failed to fetch tambang data");
   }
-
-  // Konversi _id dari ObjectId ke string dan attach weather data
-  const mine = {
-    ...tambang,
-    _id: tambang._id.toString()
-  } as Mine;
-
-  return attachWeatherData(mine);
 }
