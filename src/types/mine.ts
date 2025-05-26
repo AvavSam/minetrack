@@ -1,4 +1,4 @@
-export type Lisensi = "valid" | "pending";
+export type Lisensi = "valid" | "pending" | "expiring" | "expired";
 
 export type Mine = {
   _id: string;
