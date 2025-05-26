@@ -21,8 +21,8 @@ const fixLeafletIcon = () => {
   });
 };
 
-// Custom marker icons
-const verifiedIcon = new L.Icon({
+// Custom marker icons for license status
+const validIcon = new L.Icon({
   iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
   shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
   iconSize: [25, 41],
@@ -39,6 +39,42 @@ const pendingIcon = new L.Icon({
   popupAnchor: [1, -34],
   shadowSize: [41, 41],
 });
+
+const expiringIcon = new L.Icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+const expiredIcon = new L.Icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+// Function to get marker icon based on license status
+const getMarkerIcon = (lisensi: "valid" | "pending" | "expiring" | "expired" | undefined) => {
+  if (!lisensi) return pendingIcon;
+
+  switch (lisensi) {
+    case "valid":
+      return validIcon;
+    case "pending":
+      return pendingIcon;
+    case "expiring":
+      return expiringIcon;
+    case "expired":
+      return expiredIcon;
+    default:
+      return pendingIcon;
+  }
+};
 
 // Map center adjustment component
 function MapCenterAdjust({ center }: { center: [number, number] }) {
@@ -118,7 +154,7 @@ export default function DashboardMap() {
             <Marker
               key={mine._id}
               position={[mine.koordinat.lat, mine.koordinat.lng]}
-              icon={mine.verifikasi ? verifiedIcon : pendingIcon}
+              icon={getMarkerIcon(mine.lisensi)}
               eventHandlers={{
                 click: () => {
                   setSelectedMine(mine);
@@ -139,7 +175,7 @@ export default function DashboardMap() {
                       <strong>Type:</strong> {mine.tipeTambang}
                     </p>
                     <p>
-                      <strong>Lisensi Tambang:</strong> {mine.lisensi === "valid" ? "Valid" : "Pending"}
+                      <strong>Lisensi Tambang:</strong> {mine.lisensi ? mine.lisensi.charAt(0).toUpperCase() + mine.lisensi.slice(1) : 'Unknown'}
                     </p>
                     {mine.deskripsi && <p className="mt-1">{mine.deskripsi}</p>}
                   </div>
