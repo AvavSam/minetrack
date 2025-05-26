@@ -36,7 +36,9 @@ export default async function AdminPage({
   const tipeTambang = typeof params.tipeTambang === "string" ? params.tipeTambang : "";
   const lisensi = (typeof params.lisensi === "string" ? params.lisensi : "") as Lisensi;
 
-  const tambangData = await getTambangTerverifikasi({ search, tipeTambang, lisensi });
+  // Convert Lisensi type to the type expected by getTambangTerverifikasi
+  const lisensiParam = lisensi === "expiring" ? undefined : lisensi as "pending" | "valid" | undefined;
+  const tambangData = await getTambangTerverifikasi({ search, tipeTambang, lisensi: lisensiParam });
 
   return (
     <MineProvider>

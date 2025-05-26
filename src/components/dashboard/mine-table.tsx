@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { CheckCircle, Clock, Download, Edit, MoreHorizontal, Plus, Search, Trash2 } from "lucide-react"
+import { useState, useEffect } from "react"
+import { CheckCircle, Clock, Download, Edit, MoreHorizontal, Plus, Search, Trash2, Loader2, RefreshCw, AlertCircle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,120 +17,87 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { MineDetailView } from "./mine-detail-view"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
-// Sample mine data
-const mines = [
-  {
-    id: 1,
-    name: "Copper Mountain Mine",
-    type: "Copper",
-    location: "East Java",
-    status: "Active",
-    licenseStatus: "Valid",
-    verified: true,
-    lastUpdated: "2023-10-15",
-  },
-  {
-    id: 2,
-    name: "Golden Peak Mine",
-    type: "Gold",
-    location: "West Sumatra",
-    status: "Active",
-    licenseStatus: "Valid",
-    verified: true,
-    lastUpdated: "2023-09-28",
-  },
-  {
-    id: 3,
-    name: "Silver Valley Mine",
-    type: "Silver",
-    location: "Central Java",
-    status: "Pending",
-    licenseStatus: "Pending",
-    verified: false,
-    lastUpdated: "2023-11-02",
-  },
-  {
-    id: 4,
-    name: "Iron Ridge Excavation",
-    type: "Iron",
-    location: "South Kalimantan",
-    status: "Active",
-    licenseStatus: "Valid",
-    verified: true,
-    lastUpdated: "2023-10-05",
-  },
-  {
-    id: 5,
-    name: "Coal Creek Mine",
-    type: "Coal",
-    location: "East Kalimantan",
-    status: "Pending",
-    licenseStatus: "Pending",
-    verified: false,
-    lastUpdated: "2023-11-10",
-  },
-  {
-    id: 6,
-    name: "Emerald Valley Mine",
-    type: "Gemstone",
-    location: "North Sumatra",
-    status: "Active",
-    licenseStatus: "Expiring",
-    verified: true,
-    lastUpdated: "2023-08-22",
-  },
-  {
-    id: 7,
-    name: "Granite Quarry",
-    type: "Stone",
-    location: "West Java",
-    status: "Active",
-    licenseStatus: "Valid",
-    verified: true,
-    lastUpdated: "2023-09-15",
-  },
-  {
-    id: 8,
-    name: "Limestone Excavation",
-    type: "Stone",
-    location: "Central Sulawesi",
-    status: "Pending",
-    licenseStatus: "Pending",
-    verified: false,
-    lastUpdated: "2023-11-05",
-  },
-]
+// Define the Mine type
+interface Mine {
+  id: string
+  name: string
+  type: string
+  location: string
+  status: string
+  licenseStatus: string
+  verified: boolean
+  lastUpdated: string
+}
 
 export function MineTable() {
+  // State for search and filters
   const [searchTerm, setSearchTerm] = useState("")
   const [typeFilter, setTypeFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
   const [verificationFilter, setVerificationFilter] = useState("all")
-  const [selectedMine, setSelectedMine] = useState<number | null>(null)
+
+  // State for mine data and UI
+  const [mines, setMines] = useState<Mine[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedMine, setSelectedMine] = useState<string | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
-  // Filter mines based on search and filters
-  const filteredMines = mines.filter((mine) => {
-    const matchesSearch =
-      mine.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mine.location.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesType = typeFilter === "all" || mine.type === typeFilter
-    const matchesStatus = statusFilter === "all" || mine.licenseStatus === statusFilter
-    const matchesVerification =
-      verificationFilter === "all" ||
-      (verificationFilter === "verified" && mine.verified) ||
-      (verificationFilter === "pending" && !mine.verified)
+  // Fetch mines data from API
+  const fetchMines = async () => {
+    try {
+      setIsRefreshing(true)
+      setError(null)
 
-    return matchesSearch && matchesType && matchesStatus && matchesVerification
-  })
+      // Build URL with filter parameters
+      const params = new URLSearchParams()
+      if (searchTerm) params.append("search", searchTerm)
+      if (typeFilter !== "all") params.append("type", typeFilter)
+      if (statusFilter !== "all") params.append("status", statusFilter)
+      if (verificationFilter !== "all") params.append("verification", verificationFilter)
 
-  const handleViewDetails = (id: number) => {
+      const response = await fetch(`/api/mines?${params.toString()}`)
+
+      if (!response.ok) {
+        throw new Error(`Error fetching mines: ${response.status}`)
+      }
+
+      const data = await response.json()
+      setMines(data)
+    } catch (err) {
+      console.error("Failed to fetch mines:", err)
+      setError(err instanceof Error ? err.message : "Failed to fetch mines data")
+    } finally {
+      setLoading(false)
+      setIsRefreshing(false)
+    }
+  }
+
+  // Fetch mines when component mounts or filters change
+  useEffect(() => {
+    // Debounce search to avoid too many requests
+    const handler = setTimeout(() => {
+      fetchMines()
+    }, 300)
+
+    return () => clearTimeout(handler)
+  }, [searchTerm, typeFilter, statusFilter, verificationFilter])
+
+  const handleViewDetails = (id: string) => {
     setSelectedMine(id)
     setIsDetailOpen(true)
   }
 
   const selectedMineData = mines.find((mine) => mine.id === selectedMine)
+
+  // Handle refresh button click
+  const handleRefresh = () => {
+    setLoading(true)
+    fetchMines()
+  }
 
   return (
     <div className="space-y-4">
@@ -155,7 +122,7 @@ export function MineTable() {
             <SelectContent>
               <SelectItem value="all">All Types</SelectItem>
               <SelectItem value="Copper">Copper</SelectItem>
-              <SelectItem value="Gold">Gold</SelectItem>
+              <SelectItem value="emas">Emas</SelectItem>
               <SelectItem value="Silver">Silver</SelectItem>
               <SelectItem value="Iron">Iron</SelectItem>
               <SelectItem value="Coal">Coal</SelectItem>
@@ -172,8 +139,6 @@ export function MineTable() {
               <SelectItem value="all">All Statuses</SelectItem>
               <SelectItem value="Valid">Valid</SelectItem>
               <SelectItem value="Pending">Pending</SelectItem>
-              <SelectItem value="Expiring">Expiring</SelectItem>
-              <SelectItem value="Expired">Expired</SelectItem>
             </SelectContent>
           </Select>
 
@@ -193,6 +158,15 @@ export function MineTable() {
             Add Mine
           </Button>
 
+          <Button variant="outline" size="sm" onClick={handleRefresh} disabled={isRefreshing}>
+            {isRefreshing ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="mr-2 h-4 w-4" />
+            )}
+            Refresh
+          </Button>
+
           <Button variant="outline" size="sm">
             <Download className="mr-2 h-4 w-4" />
             Export
@@ -200,13 +174,20 @@ export function MineTable() {
         </div>
       </div>
 
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Type</TableHead>
-              <TableHead>Location</TableHead>
+              <TableHead>Description</TableHead>
               <TableHead>License Status</TableHead>
               <TableHead>Verification</TableHead>
               <TableHead>Last Updated</TableHead>
@@ -214,18 +195,27 @@ export function MineTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredMines.length === 0 ? (
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={7} className="h-24 text-center">
+                  <div className="flex items-center justify-center">
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    <span>Loading mines...</span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : mines.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="h-24 text-center">
                   No mines found.
                 </TableCell>
               </TableRow>
             ) : (
-              filteredMines.map((mine) => (
+              mines.map((mine) => (
                 <TableRow key={mine.id}>
                   <TableCell className="font-medium">{mine.name}</TableCell>
                   <TableCell>{mine.type}</TableCell>
-                  <TableCell>{mine.location}</TableCell>
+                  <TableCell className="max-w-96 truncate">{mine.location}</TableCell>
                   <TableCell>
                     <Badge
                       variant={
@@ -289,10 +279,9 @@ export function MineTable() {
             <DialogTitle>Mine Details</DialogTitle>
             <DialogDescription>Detailed information about the selected mine</DialogDescription>
           </DialogHeader>
-          {selectedMineData && <MineDetailView mine={selectedMineData} />}
+          {selectedMineData && <MineDetailView mine={{ ...selectedMineData, id: parseInt(selectedMineData.id) }} />}
         </DialogContent>
       </Dialog>
     </div>
   )
 }
-
