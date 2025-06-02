@@ -49,7 +49,7 @@ export function UserAuthNav() {
   return (
     <>
       <nav className="flex items-center space-x-1">
-        {session?.user?.role !== 'admin' && session?.user && (
+        {session?.user?.role !== "admin" && session?.user && (
           <Link className={buttonVariants({ variant: "outline" })} href="/pengajuan-tambang">
             <Plus className="h-4 w-4 mr-1" />
             <span>Ajukan Tambang</span>
@@ -67,10 +67,10 @@ export function UserAuthNav() {
           <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <Link href={session?.user?.role === 'admin' ? '/admin' : '/dashboard'}>Dashboard</Link>
+            <Link href={session?.user?.role === "admin" ? "/admin" : "/dashboard"}>Dashboard</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/dashboard/profil">Profil</Link>
+            <Link href={session?.user?.role === "admin" ? "/admin/profil" : "/dashboard/profil"}>Profil</Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut} disabled={isSigningOut} className="text-red-600 focus:text-red-600">

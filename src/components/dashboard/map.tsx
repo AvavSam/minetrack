@@ -162,28 +162,52 @@ export default function DashboardMap() {
               }}
             >
               <Popup className="mine-popup">
-                <div className="space-y-2 p-1">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-medium">{mine.namaTambang}</h3>
-                    <Badge variant={mine.verifikasi ? "default" : "outline"} className="ml-2">
-                      {mine.verifikasi ? <CheckCircle className="mr-1 h-3 w-3" /> : <Clock className="mr-1 h-3 w-3" />}
-                      {mine.verifikasi ? "Verified" : "Unverified"}
-                    </Badge>
+                <div className="p-3 max-w-[280px]">
+                  {/* Header with mine name and badge */}
+                  <div className="border-b pb-2 mb-2">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-bold text-base">{mine.namaTambang}</h3>
+                      <Badge variant={mine.verifikasi ? "default" : "outline"} className={`ml-2 ${mine.verifikasi ? "bg-green-600" : "text-amber-600 border-amber-300"}`}>
+                        {mine.verifikasi ? (
+                          <span className="flex items-center">
+                            <CheckCircle className="mr-1 h-3 w-3" /> Verified
+                          </span>
+                        ) : (
+                          <span className="flex items-center">
+                            <Clock className="mr-1 h-3 w-3" /> Pending
+                          </span>
+                        )}
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    <p>
-                      <strong>Type:</strong> {mine.tipeTambang}
-                    </p>
-                    <p>
-                      <strong>Lisensi Tambang:</strong> {mine.lisensi ? mine.lisensi.charAt(0).toUpperCase() + mine.lisensi.slice(1) : 'Unknown'}
-                    </p>
-                    {mine.deskripsi && <p className="mt-1">{mine.deskripsi}</p>}
-                  </div>
-                  <div className="flex justify-end gap-2 pt-2">
-                    <Button size="sm" variant="outline">
-                      Details
-                    </Button>
-                    {!mine.verifikasi && <Button size="sm">Verify</Button>}
+
+                  {/* Mine details */}
+                  <div className="space-y-2">
+                    <div className="grid grid-cols-3 text-sm">
+                      <span className="text-muted-foreground">Type</span>
+                      <span className="col-span-2 font-medium">{mine.tipeTambang || "Not specified"}</span>
+                    </div>
+
+                    <div className="grid grid-cols-3 text-sm">
+                      <span className="text-muted-foreground">License</span>
+                      <span className="col-span-2">
+                        <Badge
+                          variant={mine.lisensi === "valid" ? "default" : mine.lisensi === "pending" ? "outline" : mine.lisensi === "expiring" ? "secondary" : "destructive"}
+                          className={mine.lisensi === "valid" ? "bg-green-600" : mine.lisensi === "pending" ? "border-yellow-400 text-yellow-600" : mine.lisensi === "expiring" ? "bg-orange-500" : ""}
+                        >
+                          {mine.lisensi ? mine.lisensi.charAt(0).toUpperCase() + mine.lisensi.slice(1) : "Unknown"}
+                        </Badge>
+                      </span>
+                    </div>
+
+                    {mine.koordinat && (
+                      <div className="grid grid-cols-1 text-sm">
+                        <span className="text-muted-foreground">Coordinates</span>
+                        <span className="col-span-2 font-mono text-xs">
+                          {mine.koordinat.lat.toFixed(4)}, {mine.koordinat.lng.toFixed(4)}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </Popup>

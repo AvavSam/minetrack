@@ -54,10 +54,6 @@ export function TambangDetailView({ tambang }: TambangDetailViewProps) {
             </Badge>
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline">Cetak Data</Button>
-          <Button>Edit Data</Button>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

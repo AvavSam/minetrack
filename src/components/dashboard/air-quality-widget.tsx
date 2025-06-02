@@ -6,6 +6,7 @@ import { Loader2, Wind } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useMine } from "@/context/MineContext";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 
 type AirQualityData = {
   co: number;
@@ -121,18 +122,28 @@ export function AirQualityWidget() {
 
   if (!selectedMine) {
     return (
-      <div className="flex h-32 items-center justify-center text-muted-foreground">
-        <p>Select a mine on the map to view air quality data</p>
-      </div>
+      <Card className="h-10/12">
+      <CardHeader>
+        <CardTitle>Weather</CardTitle>
+        <CardDescription>Select a mine to view air quality data</CardDescription>
+      </CardHeader>
+    </Card>
     );
   }
 
   if (loading) {
     return (
-      <div className="flex h-32 items-center justify-center">
-        <Loader2 className="mr-2 h-5 w-5 animate-spin text-primary" />
-        <p>Loading air quality data...</p>
-      </div>
+      <Card className="h-10/12">
+        <CardHeader>
+          <CardTitle>Air Quality</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex h-32 items-center justify-center">
+            <Loader2 className="mr-2 h-5 w-5 animate-spin text-primary" />
+            <p>Loading air quality data...</p>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -146,46 +157,60 @@ export function AirQualityWidget() {
 
   if (!airQualityData) {
     return (
-      <div className="flex h-32 items-center justify-center text-muted-foreground">
-        <p>No air quality data available</p>
-      </div>
+      <Card className="h-10/12">
+        <CardHeader>
+          <CardTitle>Air Quality</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex h-32 items-center justify-center text-muted-foreground">
+            <p>No air quality data available</p>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="flex flex-col space-y-2">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Wind className="h-8 w-8 text-blue-500" />
-          <div>
-            <p className="text-2xl font-bold">
-              AQI: <span className={getAqiTextColor(airQualityData.usEpaIndex)}>{airQualityData.usEpaIndex}</span>
-            </p>
-            <p className="text-sm text-muted-foreground">{getAqiCategory(airQualityData.usEpaIndex)}</p>
+    <Card className="h-10/12">
+      <CardHeader>
+        <CardTitle>Air Quality</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Wind className="h-8 w-8 text-blue-500" />
+              <div>
+                <p className="text-2xl font-bold">
+                  AQI: <span className={getAqiTextColor(airQualityData.usEpaIndex)}>{airQualityData.usEpaIndex}</span>
+                </p>
+                <p className="text-sm text-muted-foreground">{getAqiCategory(airQualityData.usEpaIndex)}</p>
+              </div>
+            </div>
+          </div>
+
+          <Progress value={airQualityData.usEpaIndex} max={6} className={`h-2 ${getAqiColor(airQualityData.usEpaIndex)}`} />
+
+          <div className="grid grid-cols-2 gap-2 pt-2">
+            <div className="text-sm">
+              <p className="font-medium">PM2.5</p>
+              <p className="text-muted-foreground">{airQualityData.pm2_5.toFixed(1)} µg/m³</p>
+            </div>
+            <div className="text-sm">
+              <p className="font-medium">PM10</p>
+              <p className="text-muted-foreground">{airQualityData.pm10.toFixed(1)} µg/m³</p>
+            </div>
+            <div className="text-sm">
+              <p className="font-medium">CO</p>
+              <p className="text-muted-foreground">{airQualityData.co.toFixed(1)} ppm</p>
+            </div>
+            <div className="text-sm">
+              <p className="font-medium">NO₂</p>
+              <p className="text-muted-foreground">{airQualityData.no2.toFixed(1)} ppb</p>
+            </div>
           </div>
         </div>
-      </div>
-
-      <Progress value={airQualityData.usEpaIndex} max={6} className={`h-2 ${getAqiColor(airQualityData.usEpaIndex)}`} />
-
-      <div className="grid grid-cols-2 gap-2 pt-2">
-        <div className="text-sm">
-          <p className="font-medium">PM2.5</p>
-          <p className="text-muted-foreground">{airQualityData.pm2_5.toFixed(1)} µg/m³</p>
-        </div>
-        <div className="text-sm">
-          <p className="font-medium">PM10</p>
-          <p className="text-muted-foreground">{airQualityData.pm10.toFixed(1)} µg/m³</p>
-        </div>
-        <div className="text-sm">
-          <p className="font-medium">CO</p>
-          <p className="text-muted-foreground">{airQualityData.co.toFixed(1)} ppm</p>
-        </div>
-        <div className="text-sm">
-          <p className="font-medium">NO₂</p>
-          <p className="text-muted-foreground">{airQualityData.no2.toFixed(1)} ppb</p>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

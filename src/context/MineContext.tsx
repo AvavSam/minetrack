@@ -1,26 +1,25 @@
 "use client";
 
-import { createContext, useState, useContext, type ReactNode } from "react";
-
+import React, { createContext, useState, useContext } from "react";
 import { Mine } from "@/types/mine";
 
-type MineContextType = {
+interface MineContextType {
+  mines: Mine[];
+  setMines: React.Dispatch<React.SetStateAction<Mine[]>>;
   selectedMine: Mine | null;
-  setSelectedMine: (mine: Mine | null) => void;
-  isLoading: boolean;
-  setIsLoading: (loading: boolean) => void;
-};
+  setSelectedMine: React.Dispatch<React.SetStateAction<Mine | null>>;
+}
 
 const MineContext = createContext<MineContextType | undefined>(undefined);
 
-export function MineProvider({ children }: { children: ReactNode }) {
+export function MineProvider({ children, initialMines }: { children: React.ReactNode; initialMines?: Mine[] }) {
+  const [mines, setMines] = useState<Mine[]>(initialMines || []);
   const [selectedMine, setSelectedMine] = useState<Mine | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
-  return <MineContext.Provider value={{ selectedMine, setSelectedMine, isLoading, setIsLoading }}>{children}</MineContext.Provider>;
+  return <MineContext.Provider value={{ mines, setMines, selectedMine, setSelectedMine }}>{children}</MineContext.Provider>;
 }
 
-export function useMine<T>() {
+export function useMine() {
   const context = useContext(MineContext);
   if (context === undefined) {
     throw new Error("useMine must be used within a MineProvider");

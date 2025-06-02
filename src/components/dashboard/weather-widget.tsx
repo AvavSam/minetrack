@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudRain, CloudSnow, Loader2, Sun, ThermometerSun } from "lucide-react";
+import { Car, Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudRain, CloudSnow, Loader2, Sun, ThermometerSun } from "lucide-react";
 
 import { useMine } from "@/context/MineContext";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 
 type WeatherData = {
   location: {
@@ -103,18 +104,28 @@ export function WeatherWidget() {
 
   if (!selectedMine) {
     return (
-      <div className="flex h-32 items-center justify-center text-muted-foreground">
-        <p>Select a mine on the map to view weather data</p>
-      </div>
+      <Card className="h-10/12">
+        <CardHeader>
+          <CardTitle>Weather</CardTitle>
+          <CardDescription>Select a mine to view weather data</CardDescription>
+        </CardHeader>
+      </Card>
     );
   }
 
   if (loading) {
     return (
-      <div className="flex h-32 items-center justify-center">
-        <Loader2 className="mr-2 h-5 w-5 animate-spin text-primary" />
-        <p>Loading weather data...</p>
-      </div>
+      <Card className="h-10/12">
+        <CardHeader>
+          <CardTitle>Weather</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex h-32 items-center justify-center">
+            <Loader2 className="mr-2 h-5 w-5 animate-spin text-primary" />
+            <p>Loading weather data...</p>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -128,44 +139,59 @@ export function WeatherWidget() {
 
   if (!weatherData) {
     return (
-      <div className="flex h-32 items-center justify-center text-muted-foreground">
-        <p>No weather data available</p>
-      </div>
+      <Card className="h-10/12">
+        <CardHeader>
+          <CardTitle>Weather</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex h-32 items-center justify-center text-muted-foreground">
+            <p>No weather data available</p>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="flex flex-col space-y-2">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {getWeatherIcon(weatherData.current.condition.text)}
-          <div>
-            <p className="text-2xl font-bold">{weatherData.current.temperature}°C</p>
-            <p className="text-sm text-muted-foreground">{weatherData.current.condition.text}</p>
+    <Card className="h-10/12">
+      <CardHeader>
+        <CardTitle>Weather</CardTitle>
+        <CardDescription>Current conditions at {weatherData.location.name || "Unknown Mine"}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {getWeatherIcon(weatherData.current.condition.text)}
+              <div>
+                <p className="text-2xl font-bold">{weatherData.current.temperature}°C</p>
+                <p className="text-sm text-muted-foreground">{weatherData.current.condition.text}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 pt-2">
+            <div className="text-sm">
+              <p className="font-medium">Humidity</p>
+              <p className="text-muted-foreground">{weatherData.current.humidity}%</p>
+            </div>
+            <div className="text-sm">
+              <p className="font-medium">Wind</p>
+              <p className="text-muted-foreground">
+                {weatherData.current.windSpeed} km/h {weatherData.current.windDirection}
+              </p>
+            </div>
+            <div className="text-sm">
+              <p className="font-medium">Precipitation</p>
+              <p className="text-muted-foreground">{weatherData.current.precipitation} mm</p>
+            </div>
+            <div className="text-sm">
+              <p className="font-medium">Location</p>
+              <p className="text-muted-foreground">{weatherData.location.name}</p>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-2 pt-2">
-        <div className="text-sm">
-          <p className="font-medium">Humidity</p>
-          <p className="text-muted-foreground">{weatherData.current.humidity}%</p>
-        </div>
-        <div className="text-sm">
-          <p className="font-medium">Wind</p>
-          <p className="text-muted-foreground">
-            {weatherData.current.windSpeed} km/h {weatherData.current.windDirection}
-          </p>
-        </div>
-        <div className="text-sm">
-          <p className="font-medium">Precipitation</p>
-          <p className="text-muted-foreground">{weatherData.current.precipitation} mm</p>
-        </div>
-        <div className="text-sm">
-          <p className="font-medium">Location</p>
-          <p className="text-muted-foreground">{weatherData.location.name}</p>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

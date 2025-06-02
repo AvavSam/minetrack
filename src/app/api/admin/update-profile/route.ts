@@ -8,8 +8,11 @@ export async function POST(request: Request) {
     // Get current session
     const session = await getServerSession(authOptions);
 
-    if (!session || !session.user) {
-      return NextResponse.json({ error: "Tidak terautentikasi" }, { status: 401 });
+    if (!session || !session.user || session.user.role !== "admin") {
+      return NextResponse.json(
+        { error: "Tidak memiliki izin" },
+        { status: 401 }
+      );
     }
 
     // Get profile data from request
@@ -18,28 +21,34 @@ export async function POST(request: Request) {
     // Connect to database
     const { db } = await connectToDatabase();
 
-    // Update the user in the database
+    // Update the admin in the database
     const result = await db.collection("users").updateOne(
       { email: session.user.email }, // Identifier
       {
         $set: {
           name: profileData.name,
           email: profileData.email,
-          updatedAt: new Date(),
-        },
+          updatedAt: new Date()
+        }
       }
     );
 
     if (result.matchedCount === 0) {
-      return NextResponse.json({ error: "Pengguna tidak ditemukan" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Admin tidak ditemukan" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({
       success: true,
-      message: "Profil berhasil diperbarui",
+      message: "Profil berhasil diperbarui"
     });
   } catch (error) {
-    console.error("Error updating user profile:", error);
-    return NextResponse.json({ error: "Gagal memperbarui profil" }, { status: 500 });
+    console.error("Error updating admin profile:", error);
+    return NextResponse.json(
+      { error: "Gagal memperbarui profil admin" },
+      { status: 500 }
+    );
   }
 }

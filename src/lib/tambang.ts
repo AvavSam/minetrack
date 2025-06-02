@@ -64,3 +64,35 @@ export async function getTambangById(id: string): Promise<Mine | null> {
     throw new Error("Failed to fetch tambang data");
   }
 }
+
+// Fungsi baru untuk mengambil semua tambang tanpa filter verifikasi
+export async function getAllTambang(filter: FilterOptions = {}): Promise<Mine[]> {
+  const { db } = await connectToDatabase();
+
+  // Buat query filter tanpa syarat verifikasi
+  const query: Partial<Mine> = {};
+
+  // Terapkan filter lain jika ada
+  if (filter.search) {
+    query.namaTambang = { $regex: filter.search, $options: "i" } as any;
+  }
+
+  if (filter.tipeTambang) {
+    query.tipeTambang = filter.tipeTambang;
+  }
+
+  if (filter.lisensi) {
+    query.lisensi = filter.lisensi;
+  }
+
+  // Ambil data tambang dari database
+  const tambangData = await db.collection("tambang").find(query).toArray();
+
+  // Konversi _id dari ObjectId ke string
+  const mines = tambangData.map((tambang: any) => ({
+    ...tambang,
+    _id: tambang._id.toString()
+  }));
+
+  return mines;
+}
