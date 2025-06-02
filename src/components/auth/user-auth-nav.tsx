@@ -72,6 +72,11 @@ export function UserAuthNav() {
           <DropdownMenuItem asChild>
             <Link href={session?.user?.role === "admin" ? "/admin/profil" : "/dashboard/profil"}>Profil</Link>
           </DropdownMenuItem>
+            {session?.user?.role === "admin" && (
+            <DropdownMenuItem asChild>
+              <Link href="/admin/users">Edit User</Link>
+            </DropdownMenuItem>
+            )}
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut} disabled={isSigningOut} className="text-red-600 focus:text-red-600">
             <LogOut className="h-4 w-4 mr-2" />

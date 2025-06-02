@@ -6,7 +6,7 @@ import { attachWeatherData, attachWeatherDataToMines } from "./weather";
 interface FilterOptions {
   search?: string;
   tipeTambang?: string;
-  lisensi?: "valid" | "pending";
+  lisensi?: "valid" | "pending" | "expired" | "expiring";
 }
 
 export async function getTambangTerverifikasi(filter: FilterOptions = {}): Promise<Mine[]> {

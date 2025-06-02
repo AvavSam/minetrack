@@ -67,7 +67,6 @@ export function UserManagementTable({ users }: UserManagementTableProps) {
             <th className="px-4 py-3 text-sm font-medium text-gray-500">Email</th>
             <th className="px-4 py-3 text-sm font-medium text-gray-500">Peran</th>
             <th className="px-4 py-3 text-sm font-medium text-gray-500">Tanggal Daftar</th>
-            <th className="px-4 py-3 text-sm font-medium text-gray-500">Aksi</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
@@ -87,25 +86,6 @@ export function UserManagementTable({ users }: UserManagementTableProps) {
                 </Select>
               </td>
               <td className="px-4 py-4 text-gray-500">{new Date(user.createdAt).toLocaleDateString("id-ID")}</td>
-              <td className="px-4 py-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={updatingUserId === user.id}
-                  onClick={() => {
-                    // Implement view user details functionality
-                  }}
-                >
-                  {updatingUserId === user.id ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Memproses...
-                    </>
-                  ) : (
-                    "Detail"
-                  )}
-                </Button>
-              </td>
             </tr>
           ))}
         </tbody>

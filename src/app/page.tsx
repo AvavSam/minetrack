@@ -17,16 +17,8 @@ export default function Home() {
         <div className="container relative z-10 mx-auto px-4 text-center">
           <h1 className="mb-4 text-4xl font-extrabold tracking-tight md:text-5xl lg:text-6xl">Eksplorasi Tambang & Dampaknya di Sekitarmu</h1>
           <p className="mx-auto mb-8 max-w-3xl text-xl text-muted-foreground md:text-2xl">Pantau lokasi tambang, izin legalitas, dan dampak lingkungan secara real-time.</p>
-          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button size="lg" className="gap-2">
-              Jelajahi Peta <MapPin className="h-4 w-4" />
-            </Button>
-            <Button size="lg" variant="outline" className="gap-2">
-              Ajukan Tambang Baru <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
           <div className="mt-16 flex justify-center">
-            
+
           </div>
         </div>
       </section>
@@ -197,9 +189,6 @@ export default function Home() {
           <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">Mulai Jelajahi Sekarang</h2>
           <p className="mx-auto mb-8 max-w-2xl">Bergabunglah dengan ribuan pengguna lainnya untuk memantau aktivitas tambang dan dampaknya terhadap lingkungan.</p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button size="lg" variant="secondary" className="gap-2">
-              Jelajahi Peta <MapPin className="h-4 w-4" />
-            </Button>
             <Button size="lg" variant="outline" className="gap-2 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
               Daftar Sekarang <ArrowRight className="h-4 w-4" />
             </Button>

@@ -93,7 +93,7 @@ export default function DashboardMap() {
   const [mines, setMines] = useState<Mine[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { selectedMine, setSelectedMine } = useMine<Mine>();
+  const { selectedMine, setSelectedMine } = useMine();
 
   useEffect(() => {
     fixLeafletIcon();
